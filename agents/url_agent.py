@@ -1,15 +1,8 @@
 import pickle
-from pathlib import Path
 
-MODEL_PATH = Path("models")
+url_model = pickle.load(open("models/url_model.pkl", "rb"))
+url_vectorizer = pickle.load(open("models/url_vectorizer.pkl", "rb"))
 
-with open(MODEL_PATH / "url_model.pkl", "rb") as f:
-    url_model = pickle.load(f)
-
-with open(MODEL_PATH / "url_vectorizer.pkl", "rb") as f:
-    url_vectorizer = pickle.load(f)
-
-def analyze_url(url: str) -> str:
-    vector = url_vectorizer.transform([url])
-    prediction = url_model.predict(vector)[0]
-    return "PHISHING" if prediction == 1 else "SAFE"
+def url_ml_predict(url: str) -> int:
+    vec = url_vectorizer.transform([url])
+    return int(url_model.predict(vec)[0])
