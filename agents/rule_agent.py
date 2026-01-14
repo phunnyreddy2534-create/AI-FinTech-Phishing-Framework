@@ -1,14 +1,15 @@
-def fintech_rule_agent(text: str) -> str:
-    keywords = [
-        "otp", "kyc", "verify", "urgent",
-        "account", "bank", "login",
-        "password", "card", "upi"
-    ]
+import re
 
-    score = sum(1 for word in keywords if word in text.lower())
+SUSPICIOUS_KEYWORDS = [
+    "verify", "urgent", "account", "bank", "login",
+    "otp", "kyc", "password", "click", "confirm"
+]
 
-    if score >= 3:
-        return "HIGH"
-    elif score == 2:
-        return "MEDIUM"
-    return "LOW"
+def rule_check(text: str) -> int:
+    text = text.lower()
+    for word in SUSPICIOUS_KEYWORDS:
+        if word in text:
+            return 1
+    if re.search(r"http[s]?://", text):
+        return 1
+    return 0
