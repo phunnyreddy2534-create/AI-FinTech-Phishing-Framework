@@ -1,19 +1,19 @@
-def final_decision(sms_result: str, url_result: str, rule_risk: str) -> dict:
-    if rule_risk == "HIGH" and (
-        sms_result == "SMISHING" or url_result == "PHISHING"
-    ):
-        return {
-            "risk": "CRITICAL",
-            "action": "BLOCK TRANSACTION"
-        }
+from agents.rule_agent import rule_check
+from agents.sms_agent import sms_ml_predict
+from agents.url_agent import url_ml_predict
 
-    if rule_risk == "MEDIUM":
-        return {
-            "risk": "WARNING",
-            "action": "USER VERIFICATION REQUIRED"
-        }
+def decide_sms(text: str) -> str:
+    rule_flag = rule_check(text)
+    ml_flag = sms_ml_predict(text)
 
-    return {
-        "risk": "LOW",
-        "action": "ALLOW"
-    }
+    if rule_flag == 1 or ml_flag == 1:
+        return "SMISHING"
+    return "SAFE"
+
+def decide_url(url: str) -> str:
+    rule_flag = rule_check(url)
+    ml_flag = url_ml_predict(url)
+
+    if rule_flag == 1 or ml_flag == 1:
+        return "PHISHING"
+    return "SAFE"
